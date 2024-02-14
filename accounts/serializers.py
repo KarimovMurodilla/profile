@@ -63,7 +63,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):    
     class Meta:
         model = Comment
-        fields = ['id', 'title', 'body', 'user', 'commentator', 'created', 'updated']
+        fields = ['id', 'body', 'user', 'commentator', 'created', 'updated']
         read_only_fields = ('user', 'created', 'updated')
 
     def create(self, validated_data):

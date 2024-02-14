@@ -24,6 +24,12 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
+#Register User
+class ProfileListView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ProfileSerializer
+
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -41,6 +47,43 @@ def getRoutes(request):
     ]
     return Response(routes)
 
+# ---User---
+#api/profile  and api/profile/update
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getProfiles(request):
+    user = request.user
+    serializer = ProfileSerializer(user, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getProfile(request):
+    user = request.user
+    serializer = ProfileSerializer(user, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getProfileByUsername(request, slug):
+    user = CustomUser.objects.get(username=slug)
+    serializer = ProfileSerializer(user, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def updateProfile(request):
+    user = request.user
+    serializer = ProfileSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+# ---Comment---
 #api/comments
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -66,25 +109,6 @@ def createComment(request, pk):
     )
     serializer = CommentSerializer(comment, many=False)
     return Response(serializer.data)
-
-
-#api/profile  and api/profile/update
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getProfile(request):
-    user = request.user
-    serializer = ProfileSerializer(user, many=False)
-    return Response(serializer.data)
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated])
-def updateProfile(request):
-    user = request.user
-    serializer = ProfileSerializer(user, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
-
 
 
 #api/comments/user/<int:pk>/mycomments

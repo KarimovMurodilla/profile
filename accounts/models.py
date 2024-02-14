@@ -22,7 +22,6 @@ class CustomUser(AbstractUser):
 class Comment(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='comments')
     commentator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='commentators')
-    title = models.CharField(max_length=100, null=True, blank=True)
     body = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
